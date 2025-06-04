@@ -1,0 +1,31 @@
+# Ignore everything in the root and subdirectories
+/*
+
+# Ignore everything in all subdirectories
+*/**
+!*/             # allow navigating into folders, but not their contents yet
+!*/.gitkeep     # allow dummy files if needed for empty folders
+
+# Allow .gitignore
+!.gitignore
+
+# Allow selected root files
+!README.md
+!amalgamate.py
+
+# Allow tab data and classifier
+!classifiers/
+!classifiers/**
+
+# Allow LDA experiments
+!LDA/
+!LDA/**
+
+# Allow ModernBERT experiments
+!Modern-BERT/
+!Modern-BERT/**
+
+# Allow PU-Learning experiments
+!PU-Learning/
+!PU-Learning/**
+
