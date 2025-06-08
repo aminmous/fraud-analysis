@@ -132,10 +132,10 @@ df_final['word_density'] = df_final.apply(lambda x: len(x['mda']) / len(x['mda']
 
 df_final.loc[df_final['sic'] == "1044", 'sic'] = "1040"
 
-df_final.loc[36239, 'sic'] = 1311  # ENRON OIL & GAS CO
-df_final.loc[36243, 'sic'] = 1311  # ENRON OIL & GAS CO
-df_final.loc[38001, 'sic'] = 2911  # BP PRUDHOE BAY ROYALTY TRUST
-df_final.loc[46302, 'sic'] = 8071  # NATIONAL HEALTH LABORATORIES HOLDINGS INC
+df_final.loc[36239, 'sic'] = "1311"  # ENRON OIL & GAS CO
+df_final.loc[36243, 'sic'] = "1311"  # ENRON OIL & GAS CO
+df_final.loc[38001, 'sic'] = "2911"  # BP PRUDHOE BAY ROYALTY TRUST
+df_final.loc[46302, 'sic'] = "8071"  # NATIONAL HEALTH LABORATORIES HOLDINGS INC
 
 df_filtered = df_final[(df_final['word_count'] > 200) & (df_final['amend_filing'] == 0)]
 
