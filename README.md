@@ -7,8 +7,8 @@ It supports replication of the experiments presented in the master's thesis **"M
 
 There are two companion repositories:
 
-- [`fraud-webscraper`](https://github.com/your-username/fraud-webscraper): Contains web crawlers and data collection scripts used to generate the data
-- [`fraud-report`](https://github.com/your-username/fraud-report): LaTeX source and PDF of the thesis report
+- [`fraud-webscraper`](https://github.com/aminmous/fraud-webscraper): Contains web crawlers and data collection scripts used to generate the data
+- [`fraud-report`](https://github.com/aminmous/MA-report): LaTeX source and PDF of the thesis report
 
 ## Contents
 
