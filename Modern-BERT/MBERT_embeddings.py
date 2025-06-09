@@ -41,7 +41,7 @@ try:
     logging.info("Model and tokenizer loaded successfully.")
 
     # Load and preprocess the dataset
-    df = pd.read_csv("fraud_text.csv")
+    df = pd.read_csv("path/to/filtered_dataframe.csv")
     df = df.dropna(subset=['mda'])
     logging.info(f"Dataset loaded. Shape: {df.shape}")
 

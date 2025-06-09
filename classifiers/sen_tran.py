@@ -17,7 +17,7 @@ import pandas as pd
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Load the dataset
-df = pd.read_csv('fraud_text.csv')
+df = pd.read_csv('path/to/filtered_dataframe.csv')
 
 texts = df['mda'].astype(str).tolist()
 
@@ -34,4 +34,4 @@ df_combined = pd.concat([df, df_embeds], axis=1)
 print("Combined DataFrame shape:", df_combined.shape)
 
 # Save the combined DataFrame to a new CSV file
-df_combined.to_csv('fraud_sen_emb.csv', index=False)
+df_combined.to_csv('fraud_sentence_embeddings_dataframe.csv', index=False)

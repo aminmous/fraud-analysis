@@ -12,7 +12,7 @@ Intended to create a dataset with only metadata extracted from 10-K filings and 
 import pandas as pd
 
 # Load the dataset
-df = pd.read_csv("fraud.csv")
+df = pd.read_csv("path/to/fraud_dataframe.csv")
 
 print(f"Initial shape: {df.shape}")
 print(df.head())
@@ -56,4 +56,4 @@ print(df.head())
 
 df.drop(['word_count', 'char_count', 'word_density'], axis=1, inplace=True)
 
-df.to_csv('/Users/malla/Uni/MA/fraud-analysis/df_tab.csv', index=False)
+df.to_csv('/path/to/tabular_dataframe.csv', index=False)

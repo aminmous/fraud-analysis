@@ -61,7 +61,7 @@ def get_topic_vectors(lda_model, corpus):
 if __name__ == "__main__":
     print("Training RF with LDA script started.")
 
-    df = pd.read_csv('fraud_text.csv')
+    df = pd.read_csv('path/to/filtered_dataframe.csv')
     df['reporting_date'] = pd.to_datetime(df['reporting_date'])
 
     ##########################################################################

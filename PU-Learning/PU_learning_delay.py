@@ -22,7 +22,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, classification_report, roc_auc_score, roc_curve
+from sklearn.metrics import (
+    precision_recall_fscore_support, 
+    confusion_matrix, 
+    classification_report, 
+    roc_auc_score, 
+    roc_curve
+)
 from sklearn.utils.class_weight import compute_sample_weight
 
 from pulearn import ElkanotoPuClassifier
@@ -74,9 +80,7 @@ def load_fraud_csv(filename=str):
 if __name__ == "__main__":
     np.random.seed(42)
 
-    # filename = "df_tab.csv"
-    # filename = "fraud_sen_emb.csv"
-    filename = "fraud_mbert_full.csv"
+    filename = "path/to/dataframe_with_desired_inputs.csv"
     X, y, _, _, = load_fraud_csv(filename=filename)
 
     # Shuffle dataset
@@ -201,7 +205,7 @@ if __name__ == "__main__":
     plt.ylabel("F1 Macro Score")
     plt.ylim(bottom=0)
     plt.legend()
-    # plt.savefig("PU_plot_sen_emb_delay.png", dpi=300, bbox_inches='tight')
+    # plt.savefig("PU_plot.png", dpi=300, bbox_inches='tight')
     plt.show()
 
     print("PU learning completed. Results saved to PU_plot_delay.png.")

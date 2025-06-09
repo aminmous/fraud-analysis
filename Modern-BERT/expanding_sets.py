@@ -17,7 +17,7 @@ import numpy as np
 import torch
 
 ## Load the dataset
-df = pd.read_csv("fraud_text.csv", usecols=["mda", "fraudulent", "reporting_date"])
+df = pd.read_csv("path/to/filtered_dataframe.csv", usecols=["mda", "fraudulent", "reporting_date"])
 df['reporting_date'] = pd.to_datetime(df['reporting_date'])
 df['year'] = df['reporting_date'].dt.year
 df = df.rename(columns={'mda': 'text', 'fraudulent': 'label'})

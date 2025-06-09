@@ -27,11 +27,10 @@ from sklearn.metrics import (
     f1_score
 )
 
-## Loading Data 
-# df = pd.read_csv('df_tab.csv')
+## Loading Data
+df= pd.read_csv('path/to/dataframe_with_desired_inputs.csv', low_memory=False)
+## if using tabular data, uncomment the next line
 # df = df.drop(columns=[col for col in df.columns if col.startswith('filing_type_')])
-# df = pd.read_csv('fraud_sen_emb.csv')
-df= pd.read_csv('fraud_mbert_full.csv', low_memory=False)
 # df = df[['reporting_date', 'word_count', 'fraudulent']]
 # df = df[[col for col in df.columns if col.startswith('sen_emb_')] + ['reporting_date', 'fraudulent']]
 df = df[[col for col in df.columns if col.startswith('mbert_full_cls')] + ['reporting_date', 'fraudulent']]

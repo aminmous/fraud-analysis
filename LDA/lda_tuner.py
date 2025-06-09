@@ -61,7 +61,7 @@ def evaluate_lda(token_list_train, token_list_val, start=10, stop=150, step=10):
     return ks, perps, cohs
 
 if __name__ == "__main__":
-    df = pd.read_csv('fraud_text.csv')
+    df = pd.read_csv('path/to/filtered_dataframe.csv')
     df['reporting_date'] = pd.to_datetime(df['reporting_date'])
     
     ##########################################################################

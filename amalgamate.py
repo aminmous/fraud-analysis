@@ -13,15 +13,15 @@ from bs4 import BeautifulSoup
 
 ################## Loading the datasets ##################
 # Labels Data
-df_labels = pd.read_csv('/Users/malla/Documents/aaer_mark5.csv', sep=';')
+df_labels = pd.read_csv('/path/to/aaer_mark5.csv', sep=';')
 
 # Firm Years Data
-mda_path = '/Users/malla/Uni/MA/data/fraud-webscraper/mda_api_scraper/mda_api_scraper/firm_years.json'
+mda_path = '/path/to/firm_years.json'
 
 df_mda = pd.read_json(mda_path)
 
 # Firm Years Data from Labels
-mda_labels_path = '/Users/malla/Uni/MA/data/fraud-webscraper/mda_api_scraper/mda_api_scraper/firm_years_labels.json'
+mda_labels_path = '/path/to/firm_years_labels.json'
 
 df_aaer = pd.read_json(mda_labels_path)
 ##########################################################
@@ -126,31 +126,6 @@ def remove_urls(text: str) -> str:
     if not isinstance(text, str):
         return text
     return url_pattern.sub(r'', text)
-
-def preprocess_text(text: str) -> str:
-    """
-    Apply a standard cleaning pipeline to a raw text string:
-      1. lowercase
-      2. strip HTML tags
-      3. replace newlines/tabs/quotes with spaces
-      4. remove punctuation
-      5. strip URLs
-      6. collapse multiple spaces
-
-    Args:
-        text: The input string to clean.
-
-    Returns:
-        The cleaned string.
-    """
-    text = text.lower()
-    text = remove_html_tags(text)
-    text = re.sub(r"[\n\t\\\'\"]+", " ", text)
-    text = re.sub(r"[^\w\s]", " ", text)
-    text = remove_urls(text)
-    text = re.sub(r"\s+", " ", text).strip()
-
-    return text
 #########################################################
 
 ################ Final preprocessing and saving the dataframes ##################
@@ -164,15 +139,13 @@ df_final['fraud_end'] = pd.to_datetime(df_final['fraud_end'], errors='coerce')
 df_final['revoked'] = pd.to_datetime(df_final['revoked'], format='%m-%Y', errors='coerce')
 df_final['fye'] = pd.to_datetime(df_final['fye'], format='%d-%m')
 
-# df_final['mda'] = df_final['mda'].str.lower()
-# df_final['mda'] = df_final['mda'].apply(remove_html_tags)
-# df_final['mda'] = df_final['mda'].replace(r"[\n\t\\\'\"]+", ' ', regex=True)
-# df_final['mda'] = df_final['mda'].replace(r'[^\w\s]', ' ', regex=True)
-# df_final['mda'] = df_final['mda'].apply(remove_urls)
-# df_final['mda'] = df_final['mda'].replace(r'\s+', ' ', regex=True)
-
-# Apply preprocessing to the 'mda' column
-df_final['mda'] = df_final['mda'].apply(preprocess_text)
+# apply text preprocessing to the 'mda' column
+df_final['mda'] = df_final['mda'].str.lower()
+df_final['mda'] = df_final['mda'].apply(remove_html_tags)
+df_final['mda'] = df_final['mda'].replace(r"[\n\t\\\'\"]+", ' ', regex=True)
+df_final['mda'] = df_final['mda'].replace(r'[^\w\s]', ' ', regex=True)
+df_final['mda'] = df_final['mda'].apply(remove_urls)
+df_final['mda'] = df_final['mda'].replace(r'\s+', ' ', regex=True)
 
 # Adding new columns for text analysis
 df_final['char_count'] = df_final['mda'].apply(lambda x: len(x) if isinstance(x, str) else 0)
@@ -191,6 +164,6 @@ df_final.loc[46302, 'sic'] = "8071"  # NATIONAL HEALTH LABORATORIES HOLDINGS INC
 df_filtered = df_final[(df_final['word_count'] > 200) & (df_final['amend_filing'] == 0)]
 
 # Save the final DataFrame and filtered DataFrame to CSV files
-df_final.to_csv('/Users/malla/Uni/MA/fraud-analysis/fraud.csv', index=False)
-df_filtered.to_csv('/Users/malla/Uni/MA/fraud-analysis/fraud_text.csv', index=False)
+df_final.to_csv('/path/to/fraud-analysis/fraud.csv', index=False)
+df_filtered.to_csv('/path/to/fraud-analysis/fraud_text.csv', index=False)
 #################################################################################
