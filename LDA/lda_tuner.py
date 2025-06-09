@@ -1,4 +1,13 @@
-#!/usr/bin/env python3
+"""
+This script performs topic modeling using Latent Dirichlet Allocation (LDA) on a dataset of financial reports to 
+analyze and tune the number of topics (K) for optimal model performance. It reads preprocessed text data, splits it into training, 
+validation, and test sets based on reporting dates and fraud labels, and evaluates LDA models across a range of topic numbers. 
+The evaluation metrics include perplexity (on validation data) and coherence (c_v). 
+The script visualizes these metrics to assist in selecting the best number of topics for the LDA model.
+Usage:
+    - Adjust the data splitting section as needed for different experimental setups.
+    - Run the script to generate and save a plot comparing perplexity and coherence for different topic counts.
+"""
 import pandas as pd
 import matplotlib.pyplot as plt
 from gensim.utils import simple_preprocess
@@ -55,6 +64,10 @@ if __name__ == "__main__":
     df = pd.read_csv('fraud_text.csv')
     df['reporting_date'] = pd.to_datetime(df['reporting_date'])
     
+    ##########################################################################
+    ######## Uncomment lines below to change the train/val/test split ########
+    ##########################################################################
+
     # train 2003 and test and val sampled from post 2003
     #df_train = df[(df['reporting_date'].dt.year == 2003) & (df['word_count'] > df['word_count'].quantile(0.25))]
 
@@ -81,6 +94,7 @@ if __name__ == "__main__":
     bowl = df[(df['reporting_date'].dt.year>2003) & (df['reporting_date'].dt.year<=2008)]
     df_train, df_val = train_test_split(bowl, test_size=0.2, stratify=bowl['fraudulent'], random_state=42)
     df_train = df_train[df_train['word_count'] > df_train['word_count'].quantile(0.25)]
+    ##########################################################################
 
     print(f"Training set size: {len(df_train)}")
     print(f"Validation set size: {len(df_val)}")
@@ -118,4 +132,4 @@ if __name__ == "__main__":
     plt.title('LDA Model Selection: Perplexity vs. Coherence')
     fig.tight_layout()
 
-    plt.savefig('lda_tuning_03_08_train_small.png')
+    plt.savefig('figure_name.png')

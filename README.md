@@ -18,6 +18,7 @@ There are two companion repositories:
 - `classifier/` – Contains scripts for running classifiers such as XGBoost and Random Forest on different input types:
   - `classifier.py` – Main script for training and evaluating classifiers
   - `tabularize.py` – Transforms tabular features into the required format for `classifier.py`
+  - `sen_tran.py` - Generates sentence embeddings using the Hugging Face Model `all-MiniLM-L6-v2`
 - `LDA/` – Scripts for topic modeling using Latent Dirichlet Allocation (LDA) on MD&A sections:
   - `lda_tuner.py` – Tunes the number of topics based on perplexity and coherence scores
   - `lda_classifier.py` – Trains classifiers on the LDA-transformed topic distributions

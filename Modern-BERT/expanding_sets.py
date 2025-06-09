@@ -1,3 +1,13 @@
+"""
+This script performs a rolling-expansion training and evaluation of a Modern-BERT for fraud detection on a time-series text dataset.
+It loads the dataset, computes class weights, and iteratively expands the training set by year, holding out a future year as the test set.
+For each iteration, it splits the training data into training and validation sets, computes and prints class ratios, and calls the
+`modern_bert_tuner` function to train and evaluate the model. The process is repeated for each year in the specified range, enabling
+temporal generalization analysis of model performance.
+
+Requirements:
+- Sufficient GPU/CPU memory for large batch processing
+"""
 import pandas as pd
 from MBERT_expansion import modern_bert_tuner
 import gc
@@ -6,6 +16,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import torch
 
+## Load the dataset
 df = pd.read_csv("fraud_text.csv", usecols=["mda", "fraudulent", "reporting_date"])
 df['reporting_date'] = pd.to_datetime(df['reporting_date'])
 df['year'] = df['reporting_date'].dt.year
@@ -19,6 +30,7 @@ base_year = 2003
 final_year = 2015
 current_year = base_year
 
+## Uncomment to use stationary validation set
 #val_df = df[(df['year'] > 1996) & (df['year'] < base_year)][['text', 'label']].copy()
 
 while current_year + 1 <= final_year:
@@ -30,6 +42,7 @@ while current_year + 1 <= final_year:
     train_years = [y for y in year_set if y < test_year]
     test_years = [test_year]
 
+    ## Uncomment to use stationary validation set
     #train_df = df[df['year'].isin(train_years)][['text', 'label']].copy()
 
     full_train_df = df[df['year'].isin(train_years)][['text', 'label']].copy()

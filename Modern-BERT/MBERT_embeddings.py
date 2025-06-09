@@ -1,3 +1,18 @@
+"""
+This script generates Modern-BERT embeddings for textual data in a CSV file and saves the resulting dataset with embeddings to a new CSV file.
+
+Workflow:
+- Loads a CSV file ("fraud_text.csv") containing a column 'mda' with text data.
+- Drops rows with missing values in the 'mda' column.
+- Loads the Modern-BERT tokenizer and model from HuggingFace.
+- Processes the text data in batches, tokenizes, and computes the [CLS] token embeddings for each entry.
+- Concatenates the embeddings with the original dataframe.
+- Saves the combined dataframe.
+- Logs progress and errors to "mbert_embedding.log".
+
+Requirements:
+- Sufficient GPU/CPU memory for large batch processing
+"""
 import pandas as pd
 import numpy as np
 from transformers import AutoTokenizer, AutoModel
@@ -18,17 +33,35 @@ try:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logging.info(f"Using device: {device}")
 
+    # Load the ModernBERT model and tokenizer
     model_id = "answerdotai/ModernBERT-base"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModel.from_pretrained(model_id).to(device)
     model.eval()
     logging.info("Model and tokenizer loaded successfully.")
 
+    # Load and preprocess the dataset
     df = pd.read_csv("fraud_text.csv")
     df = df.dropna(subset=['mda'])
     logging.info(f"Dataset loaded. Shape: {df.shape}")
 
     def get_embeddings(text_list, batch_size=16):
+        """
+        Generates BERT embeddings for a list of input texts using batching.
+
+        Args:
+            text_list (List[str]): List of input text strings to generate embeddings for.
+            batch_size (int, optional): Number of texts to process in each batch. Defaults to 16.
+
+        Returns:
+            np.ndarray: Array of embeddings with shape (num_texts, embedding_dim), where each row corresponds to the [CLS] token embedding of an input text.
+
+        Notes:
+            - Assumes that `tokenizer`, `model`, `device`, `torch`, and `np` are defined in the global scope.
+            - Uses the [CLS] token embedding from the last hidden state as the representation for each text.
+            - Processes texts in batches to optimize memory usage and performance.
+            - Clears CUDA cache after each batch to manage GPU memory.
+        """
         logging.info(f"Generating embeddings for {len(text_list)} texts.")
         all_embeddings = []
 

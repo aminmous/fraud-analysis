@@ -1,21 +1,56 @@
+"""
+lda_classifier.py
+This script performs fraud detection on textual data using topic modeling and machine learning classifiers.
+It reads a dataset of financial reports, applies Latent Dirichlet Allocation (LDA) to extract topic distributions
+from the text, and then uses these topic vectors as features to train and evaluate Random Forest and XGBoost classifiers.
+The script supports flexible train/validation/test splits based on reporting years, handles class imbalance with sample weights,
+and provides detailed evaluation metrics including classification reports, confusion matrices, and ROC curves.
+Main steps:
+- Load and preprocess the dataset, including tokenization and filtering.
+- Train an LDA model to extract topic distributions from the text.
+- Use topic distributions as features for classification.
+- Train and evaluate Random Forest and XGBoost classifiers.
+- Output performance metrics and save ROC curve plots for comparison.
+Intended for research and analysis of fraud detection using interpretable topic-based features.
+"""
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from gensim.utils import simple_preprocess
 from gensim.corpora import Dictionary
 from gensim.models import LdaModel
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 import xgboost as xgb 
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve, f1_score
 from sklearn.utils.class_weight import compute_sample_weight
 
 def tokenize_texts(text_col):
+    """
+    Tokenizes a pandas Series of text data using Gensim's simple_preprocess.
+
+    Args:
+        text_col (pandas.Series): A pandas Series containing text data.
+
+    Returns:
+        list: A list of tokenized texts, where each text is represented as a list of tokens (words).
+    """
     texts = text_col.dropna().tolist()
     tokens = [simple_preprocess(text) for text in texts]
     return tokens
 
 def get_topic_vectors(lda_model, corpus):
+    """
+    Generates topic distribution vectors for each document in a corpus using a trained LDA model.
+
+    Args:
+        lda_model: A trained LDA model with a `get_document_topics` method.
+        corpus: An iterable of documents in the format expected by the LDA model.
+
+    Returns:
+        np.ndarray: A 2D NumPy array where each row corresponds to a document's topic distribution vector.
+                    Each vector contains the probabilities for all topics, sorted by topic index.
+    """
     topic_vecs = []
     for doc in corpus:
         topics = lda_model.get_document_topics(doc, minimum_probability=0.0)
@@ -28,7 +63,11 @@ if __name__ == "__main__":
 
     df = pd.read_csv('fraud_text.csv')
     df['reporting_date'] = pd.to_datetime(df['reporting_date'])
-        
+
+    ##########################################################################
+    ######## Uncomment lines below to change the train/val/test split ########
+    ##########################################################################
+    
     # training set is from 2003 with test and validation sets from later years
     #df_train = df[(df['reporting_date'].dt.year == 2003) & (df['word_count'] > df['word_count'].quantile(0.25))]
 
@@ -51,10 +90,11 @@ if __name__ == "__main__":
     #bowl = df[(df['reporting_date'].dt.year>2003) & (df['reporting_date'].dt.year<=2007)]
     #_, df_val = train_test_split(bowl, test_size=0.2, stratify=bowl['fraudulent'], random_state=42)
 
-    # train and val data between 2003-2008 and test 2011
+    # train and val data between 2004-2008 and test 2011
     bowl = df[(df['reporting_date'].dt.year>2003) & (df['reporting_date'].dt.year<=2008)]
     df_train, df_val = train_test_split(bowl, test_size=0.2, stratify=bowl['fraudulent'], random_state=42)
     df_train = df_train[df_train['word_count'] > df_train['word_count'].quantile(0.25)]
+    ##########################################################################
 
     print(f"Training set size: {len(df_train)}")
     print(f"Validation set size: {len(df_val)}")
@@ -78,6 +118,7 @@ if __name__ == "__main__":
     
     num_topics = 100
 
+    # Train LDA model
     lda = LdaModel(
         corpus=corpus_train,
         id2word=dictionary,
@@ -101,6 +142,7 @@ if __name__ == "__main__":
 
     sample_weights = compute_sample_weight(class_weight="balanced", y=y_train)
 
+    # Fit RandomForestClassifier
     rf_clf = RandomForestClassifier(
         n_estimators=100,
         random_state=42,
@@ -181,6 +223,7 @@ if __name__ == "__main__":
     fpr_xgb, tpr_xgb, _ = roc_curve(y_test, y_prob_xgb)
     plt.plot(fpr_xgb, tpr_xgb, label=f"XGBoost (AUC={roc_xgb:.2f})")
 
+    # Plot ROC curves
     plt.plot([0,1],[0,1],'k--',alpha=0.5)
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
@@ -188,4 +231,4 @@ if __name__ == "__main__":
     plt.legend(loc='lower right')
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig("roc_comp_lda_0308_100tops.png")
+    plt.savefig("figure_name.png")

@@ -1,3 +1,17 @@
+"""
+This script performs fraud detection using Random Forest and XGBoost classifiers on different data. The type of data used is determined by the commented-out sections 
+at the top, which can be adjusted to load different datasets (e.g., tabular data, sentence embeddings, or Modern-BERT embeddings).
+It loads and preprocesses the data, splits it into training, validation, and test sets based on reporting years, and handles class imbalance using sample weights.
+The script trains both classifiers, evaluates their performance using classification metrics and ROC AUC, and visualizes the ROC curves for comparison.
+
+Key steps:
+- Data loading and preprocessing (feature selection, date handling)
+- Train/validation/test split based on reporting year (with a detection delay)
+- Handling class imbalance with sample weights
+- Training and evaluating Random Forest and XGBoost classifiers
+- Custom F1-macro evaluation for XGBoost with early stopping
+- Outputting classification reports, confusion matrices, ROC AUC scores, and ROC curve plots
+"""
 import pandas as pd
 import numpy as np
 import xgboost as xgb 
@@ -13,7 +27,7 @@ from sklearn.metrics import (
     f1_score
 )
 
-# Loading Data 2
+## Loading Data 
 # df = pd.read_csv('df_tab.csv')
 # df = df.drop(columns=[col for col in df.columns if col.startswith('filing_type_')])
 # df = pd.read_csv('fraud_sen_emb.csv')
@@ -60,7 +74,7 @@ rf_clf = RandomForestClassifier(
     n_estimators=100,
     random_state=42,
     n_jobs=-1,
-    criterion='log_loss',  # Use log_loss for probabilistic output
+    criterion='log_loss',
 )
 
 rf_clf.fit(X_train, y_train, sample_weight=sample_weights)
@@ -139,6 +153,7 @@ print(f"ROC AUC for XGBoost: {roc_xgb:.4f}")
 fpr_xgb, tpr_xgb, _ = roc_curve(y_test, y_prob_xgb)
 plt.plot(fpr_xgb, tpr_xgb, label=f"XGBoost (AUC={roc_xgb:.2f})")
 
+# Plotting ROC curves
 plt.plot([0,1],[0,1],'k--',alpha=0.5)
 plt.xlabel("False Positive Rate")
 plt.ylabel("True Positive Rate")
