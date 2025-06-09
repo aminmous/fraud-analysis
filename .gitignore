@@ -12,6 +12,8 @@
 # Allow selected root files
 !README.md
 !amalgamate.py
+!requirements.txt
+!fraud_descriptives.ipynb
 
 # Allow tab data and classifier
 !classifiers/
